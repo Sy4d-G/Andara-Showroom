@@ -23,11 +23,11 @@ class SalesTransactionResource extends JsonResource
             'alamat_pembeli' => $this->alamat_pembeli,
             'tanggal_transaksi' => $this->tanggal_transaksi?->format('Y-m-d'),
             'harga_beli' => $this->harga_beli,
-            'harga_beli_formatted' => 'Rp ' . number_format($this->harga_beli, 0, ',', '.'),
+            'harga_beli_formatted' => 'Rp '.number_format($this->harga_beli, 0, ',', '.'),
             'harga_jual' => $this->harga_jual,
-            'harga_jual_formatted' => 'Rp ' . number_format($this->harga_jual, 0, ',', '.'),
+            'harga_jual_formatted' => 'Rp '.number_format($this->harga_jual, 0, ',', '.'),
             'keuntungan' => $this->keuntungan,
-            'keuntungan_formatted' => 'Rp ' . number_format($this->keuntungan, 0, ',', '.'),
+            'keuntungan_formatted' => 'Rp '.number_format($this->keuntungan, 0, ',', '.'),
             'metode_pembayaran' => $this->metode_pembayaran,
             'catatan' => $this->catatan,
             'motor' => $this->whenLoaded('motor', function () {
@@ -37,7 +37,7 @@ class SalesTransactionResource extends JsonResource
                     'merk' => $this->motor->merk,
                     'tipe_motor' => $this->motor->tipe_motor,
                     'tahun' => $this->motor->tahun,
-                    'foto_utama' => $this->motor->foto_utama ? url('storage/' . $this->motor->foto_utama) : null,
+                    'foto_utama' => $this->motor->foto_utama ? url('storage/'.$this->motor->foto_utama) : null,
                 ];
             }),
             'created_at' => $this->created_at?->toIso8601String(),

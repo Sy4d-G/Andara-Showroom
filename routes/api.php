@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\PublicMotorController;
 use App\Http\Controllers\Api\SalesTransactionController;
+use App\Http\Controllers\Api\ShowroomSettingController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes (Katalog & Informasi Showroom untuk Pelanggan & Umum)
@@ -23,6 +24,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Dashboard Statistics
     Route::get('admin/dashboard', [DashboardController::class, 'index'])->name('api.admin.dashboard');
+
+    // Showroom Settings
+    Route::get('admin/pengaturan', [ShowroomSettingController::class, 'show'])->name('api.admin.pengaturan.show');
+    Route::put('admin/pengaturan', [ShowroomSettingController::class, 'update'])->name('api.admin.pengaturan.update');
 
     // Admin Motor CRUD
     Route::apiResource('admin/motor', AdminMotorController::class)->names('api.admin.motor');

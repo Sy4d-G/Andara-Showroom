@@ -27,7 +27,7 @@ class PublicMotorResource extends JsonResource
             'pajak' => $this->pajak,
             'garansi' => $this->garansi,
             'status' => $this->status,
-            'foto_utama' => $this->foto_utama ? url('storage/' . $this->foto_utama) : null,
+            'foto_utama' => $this->foto_utama ? url('storage/'.$this->foto_utama) : null,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

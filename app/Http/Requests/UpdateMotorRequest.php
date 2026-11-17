@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateMotorRequest extends FormRequest
@@ -17,7 +18,7 @@ class UpdateMotorRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -25,7 +26,7 @@ class UpdateMotorRequest extends FormRequest
             'nama_motor' => ['sometimes', 'required', 'string', 'max:255'],
             'merk' => ['sometimes', 'required', 'string', 'max:100'],
             'tipe_motor' => ['sometimes', 'required', 'string', 'max:100'],
-            'tahun' => ['sometimes', 'required', 'integer', 'min:1990', 'max:' . (date('Y') + 1)],
+            'tahun' => ['sometimes', 'required', 'integer', 'min:1990', 'max:'.(date('Y') + 1)],
             'harga_beli' => ['sometimes', 'required', 'integer', 'min:0'],
             'harga_jual' => ['sometimes', 'required', 'integer', 'min:0'],
             'kondisi' => ['sometimes', 'required', 'string'],

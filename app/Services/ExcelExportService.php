@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\SalesTransaction;
 use App\Models\ShowroomSetting;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,7 +26,7 @@ class ExcelExportService
         $setting = ShowroomSetting::first();
         $showroomName = $setting?->nama_showroom ?? 'Andara Motor';
 
-        $spreadsheet = new Spreadsheet();
+        $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Rekap Transaksi');
 
@@ -43,7 +42,7 @@ class ExcelExportService
         $sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
         $sheet->mergeCells('A3:L3');
-        $sheet->setCellValue('A3', 'Dicetak pada: ' . Carbon::now()->translatedFormat('d F Y H:i') . ' WIB');
+        $sheet->setCellValue('A3', 'Dicetak pada: '.Carbon::now()->translatedFormat('d F Y H:i').' WIB');
         $sheet->getStyle('A3')->getFont()->setItalic(true)->setSize(10);
         $sheet->getStyle('A3')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
@@ -80,50 +79,50 @@ class ExcelExportService
         $row = 6;
         $no = 1;
         foreach ($transactions as $t) {
-            $sheet->setCellValue('A' . $row, $no++);
-            $sheet->setCellValue('B' . $row, $t->kode_transaksi);
-            $sheet->setCellValue('C' . $row, Carbon::parse($t->tanggal_transaksi)->format('d/m/Y'));
-            $sheet->setCellValue('D' . $row, $t->motor?->nama_motor ?? '-');
-            $sheet->setCellValue('E' . $row, ($t->motor?->merk ?? '-') . ' / ' . ($t->motor?->tipe_motor ?? '-'));
-            $sheet->setCellValue('F' . $row, $t->motor?->tahun ?? '-');
-            $sheet->setCellValue('G' . $row, $t->nama_pembeli);
-            $sheet->setCellValue('H' . $row, $t->no_telepon_pembeli);
-            $sheet->setCellValue('I' . $row, $t->harga_beli);
-            $sheet->setCellValue('J' . $row, $t->harga_jual);
-            $sheet->setCellValue('K' . $row, $t->keuntungan);
-            $sheet->setCellValue('L' . $row, $t->metode_pembayaran);
+            $sheet->setCellValue('A'.$row, $no++);
+            $sheet->setCellValue('B'.$row, $t->kode_transaksi);
+            $sheet->setCellValue('C'.$row, Carbon::parse($t->tanggal_transaksi)->format('d/m/Y'));
+            $sheet->setCellValue('D'.$row, $t->motor?->nama_motor ?? '-');
+            $sheet->setCellValue('E'.$row, ($t->motor?->merk ?? '-').' / '.($t->motor?->tipe_motor ?? '-'));
+            $sheet->setCellValue('F'.$row, $t->motor?->tahun ?? '-');
+            $sheet->setCellValue('G'.$row, $t->nama_pembeli);
+            $sheet->setCellValue('H'.$row, $t->no_telepon_pembeli);
+            $sheet->setCellValue('I'.$row, $t->harga_beli);
+            $sheet->setCellValue('J'.$row, $t->harga_jual);
+            $sheet->setCellValue('K'.$row, $t->keuntungan);
+            $sheet->setCellValue('L'.$row, $t->metode_pembayaran);
 
             // Number formatting for currency
-            $sheet->getStyle('I' . $row . ':K' . $row)->getNumberFormat()->setFormatCode('#,##0');
+            $sheet->getStyle('I'.$row.':K'.$row)->getNumberFormat()->setFormatCode('#,##0');
 
-            $sheet->getStyle('A' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('B' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('C' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('F' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('H' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $sheet->getStyle('L' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('A'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('B'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('C'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('F'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('H'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $sheet->getStyle('L'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
             // Border for data row
-            $sheet->getStyle('A' . $row . ':L' . $row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            $sheet->getStyle('A'.$row.':L'.$row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
 
             $row++;
         }
 
         // Total Row
         if ($row > 6) {
-            $sheet->mergeCells('A' . $row . ':H' . $row);
-            $sheet->setCellValue('A' . $row, 'TOTAL KESELURUHAN');
-            $sheet->getStyle('A' . $row)->getFont()->setBold(true);
-            $sheet->getStyle('A' . $row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            $sheet->mergeCells('A'.$row.':H'.$row);
+            $sheet->setCellValue('A'.$row, 'TOTAL KESELURUHAN');
+            $sheet->getStyle('A'.$row)->getFont()->setBold(true);
+            $sheet->getStyle('A'.$row)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
 
-            $sheet->setCellValue('I' . $row, '=SUM(I6:I' . ($row - 1) . ')');
-            $sheet->setCellValue('J' . $row, '=SUM(J6:J' . ($row - 1) . ')');
-            $sheet->setCellValue('K' . $row, '=SUM(K6:K' . ($row - 1) . ')');
+            $sheet->setCellValue('I'.$row, '=SUM(I6:I'.($row - 1).')');
+            $sheet->setCellValue('J'.$row, '=SUM(J6:J'.($row - 1).')');
+            $sheet->setCellValue('K'.$row, '=SUM(K6:K'.($row - 1).')');
 
-            $sheet->getStyle('I' . $row . ':K' . $row)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->getStyle('A' . $row . ':L' . $row)->getFont()->setBold(true);
-            $sheet->getStyle('A' . $row . ':L' . $row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
-            $sheet->getStyle('A' . $row . ':L' . $row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+            $sheet->getStyle('I'.$row.':K'.$row)->getNumberFormat()->setFormatCode('#,##0');
+            $sheet->getStyle('A'.$row.':L'.$row)->getFont()->setBold(true);
+            $sheet->getStyle('A'.$row.':L'.$row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
+            $sheet->getStyle('A'.$row.':L'.$row)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
         }
 
         // Auto size columns
@@ -131,14 +130,14 @@ class ExcelExportService
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
 
-        $filename = 'laporan_transaksi_' . Carbon::now()->format('Ymd_His') . '.xlsx';
+        $filename = 'laporan_transaksi_'.Carbon::now()->format('Ymd_His').'.xlsx';
 
         return response()->stream(function () use ($spreadsheet) {
             $writer = new Xlsx($spreadsheet);
             $writer->save('php://output');
         }, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
             'Cache-Control' => 'max-age=0',
         ]);
     }
@@ -152,13 +151,13 @@ class ExcelExportService
             ->orderBy('tanggal_transaksi', 'asc')
             ->get();
 
-        $filename = 'laporan_transaksi_' . Carbon::now()->format('Ymd_His') . '.csv';
+        $filename = 'laporan_transaksi_'.Carbon::now()->format('Ymd_His').'.csv';
 
         return response()->stream(function () use ($transactions) {
             $handle = fopen('php://output', 'w');
 
             // UTF-8 BOM for Excel compatibility
-            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
 
             // CSV Header
             fputcsv($handle, [
@@ -224,7 +223,7 @@ class ExcelExportService
             fclose($handle);
         }, 200, [
             'Content-Type' => 'text/csv; charset=UTF-8',
-            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
         ]);
     }

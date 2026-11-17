@@ -13,6 +13,7 @@ class ExcelExportApiTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private string $token;
 
     protected function setUp(): void
@@ -59,7 +60,7 @@ class ExcelExportApiTest extends TestCase
     private function authHeaders(): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->token,
+            'Authorization' => 'Bearer '.$this->token,
         ];
     }
 

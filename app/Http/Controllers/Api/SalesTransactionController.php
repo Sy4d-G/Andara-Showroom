@@ -80,7 +80,7 @@ class SalesTransactionController extends Controller
             // Generate unique transaction code: TRX-YYYYMMDD-RANDOM4
             $datePrefix = Carbon::parse($request->validated('tanggal_transaksi'))->format('Ymd');
             $randomSuffix = strtoupper(bin2hex(random_bytes(2)));
-            $kodeTransaksi = 'TRX-' . $datePrefix . '-' . $randomSuffix;
+            $kodeTransaksi = 'TRX-'.$datePrefix.'-'.$randomSuffix;
 
             $transaction = SalesTransaction::create([
                 'kode_transaksi' => $kodeTransaksi,
@@ -179,11 +179,11 @@ class SalesTransactionController extends Controller
             'data' => [
                 'total_unit_terjual' => $totalUnit,
                 'total_omset' => $totalOmset,
-                'total_omset_formatted' => 'Rp ' . number_format($totalOmset, 0, ',', '.'),
+                'total_omset_formatted' => 'Rp '.number_format($totalOmset, 0, ',', '.'),
                 'total_modal' => $totalModal,
-                'total_modal_formatted' => 'Rp ' . number_format($totalModal, 0, ',', '.'),
+                'total_modal_formatted' => 'Rp '.number_format($totalModal, 0, ',', '.'),
                 'total_keuntungan' => $totalKeuntungan,
-                'total_keuntungan_formatted' => 'Rp ' . number_format($totalKeuntungan, 0, ',', '.'),
+                'total_keuntungan_formatted' => 'Rp '.number_format($totalKeuntungan, 0, ',', '.'),
                 'breakdown_bulanan' => $monthlyStats,
             ],
         ]);

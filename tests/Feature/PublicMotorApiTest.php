@@ -117,7 +117,7 @@ class PublicMotorApiTest extends TestCase
     {
         $motor = Motor::where('nama_motor', 'Honda Vario 160 CBS')->firstOrFail();
 
-        $response = $this->getJson('/api/motor/' . $motor->id);
+        $response = $this->getJson('/api/motor/'.$motor->id);
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true)

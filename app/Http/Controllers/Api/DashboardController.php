@@ -7,7 +7,6 @@ use App\Models\Motor;
 use App\Models\SalesTransaction;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -56,9 +55,9 @@ class DashboardController extends Controller
                     'motor' => $t->motor?->nama_motor ?? '-',
                     'nama_pembeli' => $t->nama_pembeli,
                     'harga_jual' => $t->harga_jual,
-                    'harga_jual_formatted' => 'Rp ' . number_format($t->harga_jual, 0, ',', '.'),
+                    'harga_jual_formatted' => 'Rp '.number_format($t->harga_jual, 0, ',', '.'),
                     'keuntungan' => $t->keuntungan,
-                    'keuntungan_formatted' => 'Rp ' . number_format($t->keuntungan, 0, ',', '.'),
+                    'keuntungan_formatted' => 'Rp '.number_format($t->keuntungan, 0, ',', '.'),
                 ];
             });
 
@@ -76,7 +75,7 @@ class DashboardController extends Controller
                     'harga_beli' => $m->harga_beli,
                     'harga_jual' => $m->harga_jual,
                     'status' => $m->status,
-                    'foto_utama' => $m->foto_utama ? url('storage/' . $m->foto_utama) : null,
+                    'foto_utama' => $m->foto_utama ? url('storage/'.$m->foto_utama) : null,
                 ];
             });
 
@@ -111,23 +110,23 @@ class DashboardController extends Controller
                 ],
                 'ringkasan_keuangan' => [
                     'total_omset' => $totalOmset,
-                    'total_omset_formatted' => 'Rp ' . number_format($totalOmset, 0, ',', '.'),
+                    'total_omset_formatted' => 'Rp '.number_format($totalOmset, 0, ',', '.'),
                     'total_modal_terjual' => $totalModalTerjual,
-                    'total_modal_terjual_formatted' => 'Rp ' . number_format($totalModalTerjual, 0, ',', '.'),
+                    'total_modal_terjual_formatted' => 'Rp '.number_format($totalModalTerjual, 0, ',', '.'),
                     'total_keuntungan' => $totalKeuntungan,
-                    'total_keuntungan_formatted' => 'Rp ' . number_format($totalKeuntungan, 0, ',', '.'),
+                    'total_keuntungan_formatted' => 'Rp '.number_format($totalKeuntungan, 0, ',', '.'),
                     'total_aset_tersedia' => $totalAsetTersedia,
-                    'total_aset_tersedia_formatted' => 'Rp ' . number_format($totalAsetTersedia, 0, ',', '.'),
+                    'total_aset_tersedia_formatted' => 'Rp '.number_format($totalAsetTersedia, 0, ',', '.'),
                     'estimasi_potensi_laba_tersedia' => $estimasiLabaTersedia,
-                    'estimasi_potensi_laba_tersedia_formatted' => 'Rp ' . number_format($estimasiLabaTersedia, 0, ',', '.'),
+                    'estimasi_potensi_laba_tersedia_formatted' => 'Rp '.number_format($estimasiLabaTersedia, 0, ',', '.'),
                 ],
                 'performa_bulan_ini' => [
                     'bulan' => $now->translatedFormat('F Y'),
                     'unit_terjual' => $unitBulanIni,
                     'omset' => $omsetBulanIni,
-                    'omset_formatted' => 'Rp ' . number_format($omsetBulanIni, 0, ',', '.'),
+                    'omset_formatted' => 'Rp '.number_format($omsetBulanIni, 0, ',', '.'),
                     'keuntungan' => $labaBulanIni,
-                    'keuntungan_formatted' => 'Rp ' . number_format($labaBulanIni, 0, ',', '.'),
+                    'keuntungan_formatted' => 'Rp '.number_format($labaBulanIni, 0, ',', '.'),
                 ],
                 'transaksi_terbaru' => $transaksiTerbaru,
                 'motor_terbaru' => $motorTerbaru,

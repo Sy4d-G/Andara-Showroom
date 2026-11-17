@@ -86,7 +86,7 @@ class AdminMotorController extends Controller
                     MotorPhoto::create([
                         'motor_id' => $motor->id,
                         'foto_path' => $photoPath,
-                        'caption' => 'Foto ' . ($index + 1),
+                        'caption' => 'Foto '.($index + 1),
                     ]);
                 }
             }

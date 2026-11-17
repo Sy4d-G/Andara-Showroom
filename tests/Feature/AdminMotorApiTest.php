@@ -14,6 +14,7 @@ class AdminMotorApiTest extends TestCase
     use RefreshDatabase;
 
     private User $admin;
+
     private string $token;
 
     protected function setUp(): void
@@ -36,7 +37,7 @@ class AdminMotorApiTest extends TestCase
     private function authHeaders(): array
     {
         return [
-            'Authorization' => 'Bearer ' . $this->token,
+            'Authorization' => 'Bearer '.$this->token,
             'Accept' => 'application/json',
         ];
     }
@@ -130,7 +131,7 @@ class AdminMotorApiTest extends TestCase
         ]);
 
         $response = $this->withHeaders($this->authHeaders())
-            ->putJson('/api/admin/motor/' . $motor->id, [
+            ->putJson('/api/admin/motor/'.$motor->id, [
                 'nama_motor' => 'Suzuki Satria F150 Facelift',
                 'harga_jual' => 16000000,
                 'status' => 'booking',
@@ -166,7 +167,7 @@ class AdminMotorApiTest extends TestCase
         ]);
 
         $response = $this->withHeaders($this->authHeaders())
-            ->deleteJson('/api/admin/motor/' . $motor->id);
+            ->deleteJson('/api/admin/motor/'.$motor->id);
 
         $response->assertStatus(200)
             ->assertJsonPath('success', true);
