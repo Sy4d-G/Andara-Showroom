@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminMotorController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PublicMotorController;
+use App\Http\Controllers\Api\SalesTransactionController;
 use Illuminate\Support\Facades\Route;
 
 // Public Routes (Katalog & Informasi Showroom untuk Pelanggan & Umum)
@@ -22,4 +23,10 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin Motor CRUD
     Route::apiResource('admin/motor', AdminMotorController::class)->names('api.admin.motor');
     Route::post('admin/motor/{id}', [AdminMotorController::class, 'update'])->name('api.admin.motor.post_update');
+
+    // Sales Transactions
+    Route::get('admin/transaksi/rekap', [SalesTransactionController::class, 'rekap'])->name('api.admin.transaksi.rekap');
+    Route::get('admin/transaksi', [SalesTransactionController::class, 'index'])->name('api.admin.transaksi.index');
+    Route::post('admin/transaksi', [SalesTransactionController::class, 'store'])->name('api.admin.transaksi.store');
+    Route::get('admin/transaksi/{id}', [SalesTransactionController::class, 'show'])->name('api.admin.transaksi.show');
 });
