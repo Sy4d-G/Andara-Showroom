@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminMotorController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PublicMotorController;
 use Illuminate\Support\Facades\Route;
@@ -13,7 +14,12 @@ Route::get('/kontak', [PublicMotorController::class, 'kontak'])->name('api.konta
 // Auth Routes
 Route::post('/login', [AuthController::class, 'login'])->name('api.login');
 
+// Protected Admin Routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me'])->name('api.me');
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+
+    // Admin Motor CRUD
+    Route::apiResource('admin/motor', AdminMotorController::class)->names('api.admin.motor');
+    Route::post('admin/motor/{id}', [AdminMotorController::class, 'update'])->name('api.admin.motor.post_update');
 });
