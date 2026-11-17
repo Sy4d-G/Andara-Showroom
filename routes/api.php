@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdminMotorController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\PublicMotorController;
 use App\Http\Controllers\Api\SalesTransactionController;
 use Illuminate\Support\Facades\Route;
@@ -19,6 +20,9 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [AuthController::class, 'me'])->name('api.me');
     Route::post('/logout', [AuthController::class, 'logout'])->name('api.logout');
+
+    // Dashboard Statistics
+    Route::get('admin/dashboard', [DashboardController::class, 'index'])->name('api.admin.dashboard');
 
     // Admin Motor CRUD
     Route::apiResource('admin/motor', AdminMotorController::class)->names('api.admin.motor');
