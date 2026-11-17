@@ -7,10 +7,12 @@ use App\Http\Requests\StoreSalesTransactionRequest;
 use App\Http\Resources\SalesTransactionResource;
 use App\Models\Motor;
 use App\Models\SalesTransaction;
+use App\Services\ExcelExportService;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class SalesTransactionController extends Controller
 {
@@ -185,5 +187,39 @@ class SalesTransactionController extends Controller
                 'breakdown_bulanan' => $monthlyStats,
             ],
         ]);
+    }
+
+    /**
+     * Export sales transaction report to Excel (.xlsx).
+     */
+    public function exportExcel(Request $request, ExcelExportService $exportService): StreamedResponse
+    {
+        $query = SalesTransaction::query();
+
+        if ($request->filled('tanggal_mulai')) {
+            $query->whereDate('tanggal_transaksi', '>=', $request->input('tanggal_mulai'));
+        }
+        if ($request->filled('tanggal_selesai')) {
+            $query->whereDate('tanggal_transaksi', '<=', $request->input('tanggal_selesai'));
+        }
+
+        return $exportService->exportExcel($query);
+    }
+
+    /**
+     * Export sales transaction report to CSV (.csv).
+     */
+    public function exportCsv(Request $request, ExcelExportService $exportService): StreamedResponse
+    {
+        $query = SalesTransaction::query();
+
+        if ($request->filled('tanggal_mulai')) {
+            $query->whereDate('tanggal_transaksi', '>=', $request->input('tanggal_mulai'));
+        }
+        if ($request->filled('tanggal_selesai')) {
+            $query->whereDate('tanggal_transaksi', '<=', $request->input('tanggal_selesai'));
+        }
+
+        return $exportService->exportCsv($query);
     }
 }

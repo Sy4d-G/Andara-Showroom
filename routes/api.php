@@ -13,7 +13,7 @@ Route::get('/motor/{id}', [PublicMotorController::class, 'show'])->name('api.mot
 Route::get('/kontak', [PublicMotorController::class, 'kontak'])->name('api.kontak');
 
 // Auth Routes
-Route::post('/login', [AuthController::class, 'login'])->name('api.login');
+Route::post('/login', [AuthController::class, 'login'])->name('login');
 
 // Protected Admin Routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -24,7 +24,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('admin/motor', AdminMotorController::class)->names('api.admin.motor');
     Route::post('admin/motor/{id}', [AdminMotorController::class, 'update'])->name('api.admin.motor.post_update');
 
-    // Sales Transactions
+    // Sales Transactions Exports (Defined before {id})
+    Route::get('admin/transaksi/export/excel', [SalesTransactionController::class, 'exportExcel'])->name('api.admin.transaksi.export_excel');
+    Route::get('admin/transaksi/export/csv', [SalesTransactionController::class, 'exportCsv'])->name('api.admin.transaksi.export_csv');
+
+    // Sales Transactions CRUD & Recap
     Route::get('admin/transaksi/rekap', [SalesTransactionController::class, 'rekap'])->name('api.admin.transaksi.rekap');
     Route::get('admin/transaksi', [SalesTransactionController::class, 'index'])->name('api.admin.transaksi.index');
     Route::post('admin/transaksi', [SalesTransactionController::class, 'store'])->name('api.admin.transaksi.store');
