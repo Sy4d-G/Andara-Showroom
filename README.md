@@ -1,4 +1,4 @@
-# API Showroom Motor Bekas - Andara Motor 🏍️
+# API Showroom Motor Bekas - Andara Motor 
 
 Backend RESTful API untuk Sistem Informasi Showroom Motor Bekas **Andara Motor** berbasis Laravel, dibangun sesuai spesifikasi Laporan Progress 3 UAS Mata Kuliah Framework Pemrograman Web (Fakultas Ilmu Komputer, Universitas Singaperbangsa Karawang).
 
@@ -12,7 +12,7 @@ Sistem memiliki 2 aktor utama:
 
 ---
 
-## 🚀 Panduan Menjalankan API
+##  Panduan Menjalankan API
 
 ### 1. Prasyarat
 - PHP >= 8.2 (disarankan PHP 8.3)
@@ -41,7 +41,7 @@ Server akan aktif di: `http://127.0.0.1:8000` (atau port yang ditentukan).
 
 ---
 
-## 🔐 Akun Default Admin
+##  Akun Default Admin
 
 | Field | Nilai |
 |---|---|
@@ -184,7 +184,7 @@ Base URL: `http://127.0.0.1:8000/api`
 
 ---
 
-## 🧪 Pengujian Otomatis (Automated Tests)
+##  Pengujian Otomatis (Automated Tests)
 
 Project ini dilengkapi dengan **32 Automated Tests** yang mencakup seluruh skenario validasi, relasi database, alur transaksi, ekspor Excel, filter katalog, dan keamanan data:
 
