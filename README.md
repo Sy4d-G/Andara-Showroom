@@ -4,7 +4,7 @@ Backend RESTful API untuk Sistem Informasi Showroom Motor Bekas **Andara Motor**
 
 ---
 
-## 📋 Daftar Fitur & Spesifikasi
+##  Daftar Fitur & Spesifikasi
 
 Sistem memiliki 2 aktor utama:
 1. **Admin (Owner Showroom)**: Mengelola katalog motor, memantau dashboard penjualan & keuntungan, mencatat transaksi penjualan, melihat rekapitulasi finansial, dan mengunduh laporan Excel.
