@@ -13,11 +13,11 @@ Route::get('/motor/{id}', fn (int $id) => view('public.detail', ['motorId' => $i
 Route::view('/login', 'auth.login')->name('web.login');
 
 // Admin Panel UI (protected client-side via Sanctum Bearer token on /api/me & /api/admin/*)
-// Route::prefix('admin')->name('admin.')->group(function (): void {
-//     Route::view('/', 'admin.dashboard')->name('dashboard');
-//     Route::view('/motor', 'admin.motors.index')->name('motors.index');
-//     Route::get('/motor/create', fn () => view('admin.motors.form', ['motorId' => null]))->name('motors.create');
-//     Route::get('/motor/{id}/edit', fn (int $id) => view('admin.motors.form', ['motorId' => $id]))
-//         ->whereNumber('id')
-//         ->name('motors.edit');
-// });
+Route::prefix('admin')->name('admin.')->group(function (): void {
+    Route::view('/', 'admin.dashboard')->name('dashboard');
+    Route::view('/motor', 'admin.motors.index')->name('motors.index');
+    Route::get('/motor/create', fn () => view('admin.motors.form', ['motorId' => null]))->name('motors.create');
+    Route::get('/motor/{id}/edit', fn (int $id) => view('admin.motors.form', ['motorId' => $id]))
+        ->whereNumber('id')
+        ->name('motors.edit');
+});

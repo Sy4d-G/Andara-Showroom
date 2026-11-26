@@ -629,457 +629,454 @@ async function initAuthLogin() {
     });
 }
 
-// =============================================================================
-// Bagian Panel Admin (di-comment dulu — diserahkan ke anggota tim berikutnya)
-// =============================================================================
-// async function ensureAdminAuthenticated() {
-//     if (!getToken()) {
-//         window.location.href = '/login';
-//         return null;
-//     }
-//
-//     const meRes = await apiFetch('/me');
-//     if (!meRes.ok || !meRes.data) {
-//         clearAuth();
-//         window.location.href = '/login';
-//         return null;
-//     }
-//
-//     setAuth(getToken(), meRes.data);
-//     document.querySelectorAll('[data-admin-name]').forEach((el) => {
-//         el.textContent = meRes.data.name || 'Admin';
-//     });
-//     document.querySelectorAll('[data-admin-email]').forEach((el) => {
-//         el.textContent = meRes.data.email || '';
-//     });
-//
-//     return meRes.data;
-// }
-//
-// async function initAdminDashboard() {
-//     const user = await ensureAdminAuthenticated();
-//     if (!user) {
-//         return;
-//     }
-//
-//     const root = document.getElementById('dashboard-root');
-//     const res = await apiFetch('/admin/dashboard');
-//     if (!root) {
-//         return;
-//     }
-//
-//     if (!res.ok || !res.data) {
-//         root.innerHTML = `
-//             <div role="alert" class="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-medium text-red-900">
-//                 Gagal memuat statistik dashboard: ${escapeHtml(res.message)}
-//             </div>
-//         `;
-//         return;
-//     }
-//
-//     const { ringkasan_unit: unit, ringkasan_keuangan: keu, performa_bulan_ini: bulan, motor_terbaru: motors, transaksi_terbaru: tx } = res.data;
-//
-//     root.innerHTML = `
-//         <section aria-labelledby="unit-summary-heading">
-//             <h2 id="unit-summary-heading" class="text-lg font-bold text-ink">Ringkasan Stok Unit</h2>
-//             <p class="text-sm text-muted">Data langsung dari API dashboard showroom.</p>
-//
-//             <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-//                 <div class="rounded-lg border border-line bg-white p-5">
-//                     <p class="text-xs font-semibold text-muted">Unit Tersedia</p>
-//                     <p class="mt-2 text-3xl font-extrabold text-ink tabular-nums">${escapeHtml(unit.motor_tersedia)}</p>
-//                     <p class="mt-1 text-xs text-emerald-700">Aktif di katalog publik</p>
-//                 </div>
-//                 <div class="rounded-lg border border-line bg-white p-5">
-//                     <p class="text-xs font-semibold text-muted">Unit Booking (DP)</p>
-//                     <p class="mt-2 text-3xl font-extrabold text-ink tabular-nums">${escapeHtml(unit.motor_booking)}</p>
-//                     <p class="mt-1 text-xs text-amber-800">Menunggu pelunasan</p>
-//                 </div>
-//                 <div class="rounded-lg border border-line bg-white p-5">
-//                     <p class="text-xs font-semibold text-muted">Unit Terjual</p>
-//                     <p class="mt-2 text-3xl font-extrabold text-ink tabular-nums">${escapeHtml(unit.motor_terjual)}</p>
-//                     <p class="mt-1 text-xs text-muted">Total tercatat terjual</p>
-//                 </div>
-//                 <div class="rounded-lg border border-line bg-white p-5">
-//                     <p class="text-xs font-semibold text-muted">Total Aset Stok</p>
-//                     <p class="mt-2 text-xl font-extrabold text-ink tabular-nums">${escapeHtml(keu.total_aset_tersedia_formatted)}</p>
-//                     <p class="mt-1 text-xs text-emerald-700">Estimasi laba: ${escapeHtml(keu.estimasi_potensi_laba_tersedia_formatted)}</p>
-//                 </div>
-//             </div>
-//
-//             <div class="mt-4 grid gap-4 sm:grid-cols-3">
-//                 <div class="rounded-lg border border-line bg-white p-5">
-//                     <p class="text-xs font-semibold text-muted">Total Omset Penjualan</p>
-//                     <p class="mt-1.5 text-xl font-extrabold text-ink tabular-nums">${escapeHtml(keu.total_omset_formatted)}</p>
-//                 </div>
-//                 <div class="rounded-lg border border-line bg-white p-5">
-//                     <p class="text-xs font-semibold text-muted">Total Keuntungan Bersih</p>
-//                     <p class="mt-1.5 text-xl font-extrabold text-emerald-700 tabular-nums">${escapeHtml(keu.total_keuntungan_formatted)}</p>
-//                 </div>
-//                 <div class="rounded-lg border border-line bg-white p-5">
-//                     <p class="text-xs font-semibold text-muted">Performa ${escapeHtml(bulan.bulan)}</p>
-//                     <p class="mt-1.5 text-xl font-extrabold text-ink tabular-nums">${escapeHtml(bulan.unit_terjual)} unit &middot; ${escapeHtml(bulan.keuntungan_formatted)}</p>
-//                 </div>
-//             </div>
-//         </section>
-//
-//         <section aria-labelledby="recent-motors-heading" class="mt-8 rounded-lg border border-line bg-white">
-//             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
-//                 <div>
-//                     <h2 id="recent-motors-heading" class="text-base font-bold text-ink">5 Motor Masuk Terbaru</h2>
-//                     <p class="text-xs text-muted">Harga beli hanya ditampilkan di panel admin.</p>
-//                 </div>
-//                 <a href="/admin/motor" class="text-sm font-semibold text-brand hover:underline">Kelola semua unit</a>
-//             </div>
-//             <div tabindex="0" role="region" aria-labelledby="recent-motors-heading" class="table-wrapper">
-//                 <table class="data-table data-table--stack text-left text-sm">
-//                     <thead>
-//                         <tr class="border-b border-line text-xs font-semibold text-muted">
-//                             <th scope="col" class="px-5 py-3">Unit</th>
-//                             <th scope="col" class="px-4 py-3">Tahun</th>
-//                             <th scope="col" class="px-4 py-3">Harga Beli</th>
-//                             <th scope="col" class="px-4 py-3">Harga Jual</th>
-//                             <th scope="col" class="px-4 py-3">Status</th>
-//                             <th scope="col" class="px-5 py-3 text-right">Aksi</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody class="divide-y divide-line">
-//                         ${motors.map((m) => `
-//                             <tr class="hover:bg-surface/60">
-//                                 <th scope="row" data-label="Unit" class="px-5 py-3.5 font-bold text-ink">${escapeHtml(m.nama_motor)}</th>
-//                                 <td data-label="Tahun" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(m.tahun)}</td>
-//                                 <td data-label="Harga Beli" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(formatRupiah(m.harga_beli))}</td>
-//                                 <td data-label="Harga Jual" class="px-4 py-3.5 font-bold text-ink tabular-nums">${escapeHtml(formatRupiah(m.harga_jual))}</td>
-//                                 <td data-label="Status" class="px-4 py-3.5">${statusBadgeHtml(m.status)}</td>
-//                                 <td data-label="Aksi" class="px-5 py-3.5 text-right">
-//                                     <a href="/admin/motor/${encodeURIComponent(m.id)}/edit" class="rounded border border-line bg-white px-2.5 py-1.5 text-xs font-semibold text-ink hover:bg-surface">Edit</a>
-//                                 </td>
-//                             </tr>
-//                         `).join('')}
-//                     </tbody>
-//                 </table>
-//             </div>
-//         </section>
-//
-//         <section aria-labelledby="recent-tx-heading" class="mt-8 rounded-lg border border-line bg-white">
-//             <div class="border-b border-line px-5 py-4">
-//                 <h2 id="recent-tx-heading" class="text-base font-bold text-ink">Transaksi Penjualan Terbaru</h2>
-//             </div>
-//             ${tx.length === 0 ? `
-//                 <div class="px-6 py-10 text-center text-sm text-muted">Belum ada transaksi penjualan yang tercatat.</div>
-//             ` : `
-//                 <div tabindex="0" role="region" aria-labelledby="recent-tx-heading" class="table-wrapper">
-//                     <table class="data-table data-table--stack text-left text-sm">
-//                         <thead>
-//                             <tr class="border-b border-line text-xs font-semibold text-muted">
-//                                 <th scope="col" class="px-5 py-3">Kode</th>
-//                                 <th scope="col" class="px-4 py-3">Tanggal</th>
-//                                 <th scope="col" class="px-4 py-3">Motor</th>
-//                                 <th scope="col" class="px-4 py-3">Pembeli</th>
-//                                 <th scope="col" class="px-4 py-3">Harga Jual</th>
-//                                 <th scope="col" class="px-5 py-3 text-right">Keuntungan</th>
-//                             </tr>
-//                         </thead>
-//                         <tbody class="divide-y divide-line">
-//                             ${tx.map((t) => `
-//                                 <tr class="hover:bg-surface/60">
-//                                     <th scope="row" data-label="Kode" class="px-5 py-3.5 font-semibold text-ink tabular-nums">${escapeHtml(t.kode_transaksi)}</th>
-//                                     <td data-label="Tanggal" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(t.tanggal)}</td>
-//                                     <td data-label="Motor" class="px-4 py-3.5 font-medium text-ink">${escapeHtml(t.motor)}</td>
-//                                     <td data-label="Pembeli" class="px-4 py-3.5 text-muted">${escapeHtml(t.nama_pembeli)}</td>
-//                                     <td data-label="Harga Jual" class="px-4 py-3.5 font-semibold text-ink tabular-nums">${escapeHtml(t.harga_jual_formatted)}</td>
-//                                     <td data-label="Keuntungan" class="px-5 py-3.5 text-right font-bold text-emerald-700 tabular-nums">${escapeHtml(t.keuntungan_formatted)}</td>
-//                                 </tr>
-//                             `).join('')}
-//                         </tbody>
-//                     </table>
-//                 </div>
-//             `}
-//         </section>
-//     `;
-// }
-//
-// async function initAdminMotorsIndex() {
-//     const user = await ensureAdminAuthenticated();
-//     if (!user) {
-//         return;
-//     }
-//
-//     const filterForm = document.getElementById('admin-motor-filter');
-//     const merkSelect = document.getElementById('admin-filter-merk');
-//     const tableContainer = document.getElementById('admin-motors-table-container');
-//     const countBadge = document.getElementById('admin-motors-count');
-//     const feedback = document.getElementById('admin-feedback');
-//
-//     const metaRes = await apiFetch('/motor/meta/filters');
-//     if (metaRes.ok && merkSelect && Array.isArray(metaRes.data?.merks)) {
-//         merkSelect.innerHTML = '<option value="">Semua Merk</option>' +
-//             metaRes.data.merks.map((m) => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
-//     }
-//
-//     function showFeedback(type, message) {
-//         if (!feedback) {
-//             return;
-//         }
-//         feedback.hidden = false;
-//         feedback.className = type === 'error'
-//             ? 'mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-900'
-//             : 'mb-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900';
-//         feedback.textContent = message;
-//     }
-//
-//     async function loadMotors(page = 1) {
-//         const query = new URLSearchParams({ per_page: '15', page: String(page) });
-//         if (filterForm) {
-//             const fd = new FormData(filterForm);
-//             for (const [k, v] of fd.entries()) {
-//                 if (String(v).trim()) {
-//                     query.set(k, String(v).trim());
-//                 }
-//             }
-//         }
-//
-//         if (tableContainer) {
-//             tableContainer.innerHTML = '<div class="px-6 py-10 text-center text-sm text-muted" role="status">Memuat daftar unit motor...</div>';
-//         }
-//
-//         const res = await apiFetch(`/admin/motor?${query.toString()}`);
-//         if (!res.ok) {
-//             if (tableContainer) {
-//                 tableContainer.innerHTML = `<div role="alert" class="px-6 py-10 text-center text-sm font-medium text-red-800">${escapeHtml(res.message)}</div>`;
-//             }
-//             return;
-//         }
-//
-//         const items = Array.isArray(res.data) ? res.data : [];
-//         if (countBadge) {
-//             countBadge.textContent = `${res.meta?.total ?? items.length} unit`;
-//         }
-//
-//         if (items.length === 0) {
-//             tableContainer.innerHTML = `
-//                 <div class="px-6 py-12 text-center">
-//                     <p class="text-base font-bold text-ink">Tidak ada unit motor ditemukan</p>
-//                     <p class="mt-1 text-sm text-muted">Tambahkan unit baru atau reset filter pencarian Anda.</p>
-//                     <div class="mt-5">
-//                         <a href="/admin/motor/create" class="btn-primary">Tambah Unit Motor</a>
-//                     </div>
-//                 </div>
-//             `;
-//             return;
-//         }
-//
-//         tableContainer.innerHTML = `
-//             <div tabindex="0" role="region" aria-labelledby="admin-motors-heading" class="table-wrapper">
-//                 <table class="data-table data-table--stack text-left text-sm">
-//                     <thead>
-//                         <tr class="border-b border-line text-xs font-semibold text-muted">
-//                             <th scope="col" class="px-5 py-3">Unit</th>
-//                             <th scope="col" class="px-4 py-3">Tahun / KM</th>
-//                             <th scope="col" class="px-4 py-3">Harga Beli</th>
-//                             <th scope="col" class="px-4 py-3">Harga Jual</th>
-//                             <th scope="col" class="px-4 py-3">Potensi Laba</th>
-//                             <th scope="col" class="px-4 py-3">Status</th>
-//                             <th scope="col" class="px-5 py-3 text-right">Aksi</th>
-//                         </tr>
-//                     </thead>
-//                     <tbody class="divide-y divide-line">
-//                         ${items.map((m) => {
-//                             const photo = escapeHtml(getMotorPhotoUrl(m));
-//                             const fallback = escapeHtml(getStandinPhoto(m.id));
-//                             const nextStatus = m.status === 'tersedia' ? 'booking' : 'tersedia';
-//                             const nextLabel = nextStatus === 'booking' ? 'Tandai Booking' : 'Tandai Tersedia';
-//                             return `
-//                                 <tr class="hover:bg-surface/60">
-//                                     <th scope="row" data-label="Unit" class="px-5 py-3.5">
-//                                         <div class="flex items-center gap-3">
-//                                             <img src="${photo}" data-fallback="${fallback}" alt="${escapeHtml(m.nama_motor)}" width="64" height="48" loading="lazy" class="h-12 w-16 shrink-0 rounded border border-line object-cover">
-//                                             <div class="text-left">
-//                                                 <p class="font-bold text-ink">${escapeHtml(m.nama_motor)}</p>
-//                                                 <p class="text-xs text-muted">${escapeHtml(m.merk)} &middot; ${escapeHtml(m.tipe_motor)}</p>
-//                                             </div>
-//                                         </div>
-//                                     </th>
-//                                     <td data-label="Tahun / KM" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(m.tahun)} &middot; ${escapeHtml(formatKm(m.jarak_tempuh))}</td>
-//                                     <td data-label="Harga Beli" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(m.harga_beli_formatted)}</td>
-//                                     <td data-label="Harga Jual" class="px-4 py-3.5 font-bold text-ink tabular-nums">${escapeHtml(m.harga_jual_formatted)}</td>
-//                                     <td data-label="Potensi Laba" class="px-4 py-3.5 font-semibold text-emerald-700 tabular-nums">${escapeHtml(m.potensi_keuntungan_formatted)}</td>
-//                                     <td data-label="Status" class="px-4 py-3.5">
-//                                         <div class="flex flex-wrap items-center gap-2">
-//                                             ${statusBadgeHtml(m.status)}
-//                                             ${m.status !== 'terjual' ? `<button type="button" data-toggle-status="${m.id}" data-next-status="${nextStatus}" class="text-xs font-semibold text-muted underline hover:text-ink">${nextLabel}</button>` : ''}
-//                                         </div>
-//                                     </td>
-//                                     <td data-label="Aksi" class="px-5 py-3.5 text-right">
-//                                         <div class="inline-flex items-center gap-1.5">
-//                                             <a href="/motor/${encodeURIComponent(m.id)}" target="_blank" rel="noopener noreferrer" class="rounded border border-line bg-white px-2.5 py-1.5 text-xs font-semibold text-ink hover:bg-surface">Publik</a>
-//                                             <a href="/admin/motor/${encodeURIComponent(m.id)}/edit" class="rounded border border-line bg-white px-2.5 py-1.5 text-xs font-semibold text-ink hover:bg-surface">Edit</a>
-//                                             <button type="button" data-delete-motor="${m.id}" data-motor-name="${escapeHtml(m.nama_motor)}" class="rounded border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-800 hover:bg-red-100">Hapus</button>
-//                                         </div>
-//                                     </td>
-//                                 </tr>
-//                             `;
-//                         }).join('')}
-//                     </tbody>
-//                 </table>
-//             </div>
-//         `;
-//
-//         attachImageFallbacks(tableContainer);
-//
-//         tableContainer.querySelectorAll('[data-toggle-status]').forEach((btn) => {
-//             btn.addEventListener('click', async () => {
-//                 const id = btn.getAttribute('data-toggle-status');
-//                 const status = btn.getAttribute('data-next-status');
-//                 btn.disabled = true;
-//                 const updateRes = await apiFetch(`/admin/motor/${encodeURIComponent(id)}`, {
-//                     method: 'POST',
-//                     body: JSON.stringify({ status }),
-//                 });
-//                 if (updateRes.ok) {
-//                     showFeedback('success', `Status unit berhasil diperbarui menjadi ${status}.`);
-//                     await loadMotors(page);
-//                 } else {
-//                     showFeedback('error', updateRes.message);
-//                     btn.disabled = false;
-//                 }
-//             });
-//         });
-//
-//         tableContainer.querySelectorAll('[data-delete-motor]').forEach((btn) => {
-//             btn.addEventListener('click', async () => {
-//                 const id = btn.getAttribute('data-delete-motor');
-//                 const name = btn.getAttribute('data-motor-name');
-//                 if (!window.confirm(`Hapus unit ${name}?`)) {
-//                     return;
-//                 }
-//                 btn.disabled = true;
-//                 const delRes = await apiFetch(`/admin/motor/${encodeURIComponent(id)}`, { method: 'DELETE' });
-//                 if (delRes.ok) {
-//                     showFeedback('success', delRes.message || 'Unit berhasil dihapus.');
-//                     await loadMotors(page);
-//                 } else {
-//                     showFeedback('error', delRes.message);
-//                     btn.disabled = false;
-//                 }
-//             });
-//         });
-//     }
-//
-//     filterForm?.addEventListener('submit', (event) => {
-//         event.preventDefault();
-//         loadMotors(1);
-//     });
-//
-//     document.getElementById('admin-filter-reset')?.addEventListener('click', () => {
-//         filterForm?.reset();
-//         loadMotors(1);
-//     });
-//
-//     await loadMotors(1);
-// }
-//
-// async function initAdminMotorForm() {
-//     const user = await ensureAdminAuthenticated();
-//     if (!user) {
-//         return;
-//     }
-//
-//     const form = document.getElementById('admin-motor-form');
-//     const motorId = form?.getAttribute('data-motor-id') || '';
-//     const isEdit = Boolean(motorId);
-//     const errorBox = document.getElementById('form-error-summary');
-//     const submitBtn = document.getElementById('form-submit-btn');
-//
-//     // Photo preview
-//     const photoInput = document.getElementById('foto_utama');
-//     const previewBox = document.getElementById('photo-preview-box');
-//     const previewImg = document.getElementById('photo-preview-img');
-//     photoInput?.addEventListener('change', () => {
-//         const file = photoInput.files?.[0];
-//         if (!file || !previewBox || !previewImg) {
-//             return;
-//         }
-//         const reader = new FileReader();
-//         reader.onload = (e) => {
-//             if (typeof e.target?.result === 'string') {
-//                 previewImg.src = e.target.result;
-//                 previewBox.hidden = false;
-//             }
-//         };
-//         reader.readAsDataURL(file);
-//     });
-//
-//     if (isEdit && form) {
-//         const res = await apiFetch(`/admin/motor/${encodeURIComponent(motorId)}`);
-//         if (!res.ok || !res.data) {
-//             if (errorBox) {
-//                 errorBox.hidden = false;
-//                 errorBox.textContent = `Gagal memuat data motor: ${res.message}`;
-//             }
-//             return;
-//         }
-//         const m = res.data;
-//         const fields = ['nama_motor', 'merk', 'tipe_motor', 'tahun', 'harga_beli', 'harga_jual', 'jarak_tempuh', 'kondisi', 'surat_surat', 'pajak', 'garansi', 'status', 'deskripsi'];
-//         fields.forEach((name) => {
-//             const el = form.elements.namedItem(name);
-//             if (el && m[name] !== null && m[name] !== undefined) {
-//                 el.value = String(m[name]);
-//             }
-//         });
-//         if (m.foto_utama && previewBox && previewImg) {
-//             previewImg.src = m.foto_utama;
-//             previewBox.hidden = false;
-//         }
-//     }
-//
-//     form?.addEventListener('submit', async (event) => {
-//         event.preventDefault();
-//         if (errorBox) {
-//             errorBox.hidden = true;
-//             errorBox.innerHTML = '';
-//         }
-//
-//         const fd = new FormData(form);
-//         // Remove empty file inputs so optional image rules pass cleanly
-//         if (!photoInput?.files?.length) {
-//             fd.delete('foto_utama');
-//         }
-//         const galleryInput = document.getElementById('photos');
-//         if (!galleryInput?.files?.length) {
-//             fd.delete('photos[]');
-//         }
-//
-//         if (submitBtn) {
-//             submitBtn.disabled = true;
-//             submitBtn.textContent = 'Menyimpan...';
-//         }
-//
-//         const endpoint = isEdit ? `/admin/motor/${encodeURIComponent(motorId)}` : '/admin/motor';
-//         const res = await apiFetch(endpoint, {
-//             method: 'POST',
-//             body: fd,
-//         });
-//
-//         if (!res.ok) {
-//             if (errorBox) {
-//                 const lines = res.errors
-//                     ? Object.values(res.errors).flat().map((msg) => `<li>${escapeHtml(msg)}</li>`).join('')
-//                     : `<li>${escapeHtml(res.message)}</li>`;
-//                 errorBox.hidden = false;
-//                 errorBox.innerHTML = `<p class="font-bold">Periksa kembali data unit:</p><ul class="mt-1 list-disc pl-5">${lines}</ul>`;
-//                 errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-//             }
-//             if (submitBtn) {
-//                 submitBtn.disabled = false;
-//                 submitBtn.textContent = isEdit ? 'Simpan Perubahan' : 'Simpan Unit ke Katalog';
-//             }
-//             return;
-//         }
-//
-//         window.location.href = '/admin/motor';
-//     });
-// }
+async function ensureAdminAuthenticated() {
+    if (!getToken()) {
+        window.location.href = '/login';
+        return null;
+    }
+
+    const meRes = await apiFetch('/me');
+    if (!meRes.ok || !meRes.data) {
+        clearAuth();
+        window.location.href = '/login';
+        return null;
+    }
+
+    setAuth(getToken(), meRes.data);
+    document.querySelectorAll('[data-admin-name]').forEach((el) => {
+        el.textContent = meRes.data.name || 'Admin';
+    });
+    document.querySelectorAll('[data-admin-email]').forEach((el) => {
+        el.textContent = meRes.data.email || '';
+    });
+
+    return meRes.data;
+}
+
+async function initAdminDashboard() {
+    const user = await ensureAdminAuthenticated();
+    if (!user) {
+        return;
+    }
+
+    const root = document.getElementById('dashboard-root');
+    const res = await apiFetch('/admin/dashboard');
+    if (!root) {
+        return;
+    }
+
+    if (!res.ok || !res.data) {
+        root.innerHTML = `
+            <div role="alert" class="rounded-lg border border-red-200 bg-red-50 p-5 text-sm font-medium text-red-900">
+                Gagal memuat statistik dashboard: ${escapeHtml(res.message)}
+            </div>
+        `;
+        return;
+    }
+
+    const { ringkasan_unit: unit, ringkasan_keuangan: keu, performa_bulan_ini: bulan, motor_terbaru: motors, transaksi_terbaru: tx } = res.data;
+
+    root.innerHTML = `
+        <section aria-labelledby="unit-summary-heading">
+            <h2 id="unit-summary-heading" class="text-lg font-bold text-ink">Ringkasan Stok Unit</h2>
+            <p class="text-sm text-muted">Data langsung dari API dashboard showroom.</p>
+
+            <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div class="rounded-lg border border-line bg-white p-5">
+                    <p class="text-xs font-semibold text-muted">Unit Tersedia</p>
+                    <p class="mt-2 text-3xl font-extrabold text-ink tabular-nums">${escapeHtml(unit.motor_tersedia)}</p>
+                    <p class="mt-1 text-xs text-emerald-700">Aktif di katalog publik</p>
+                </div>
+                <div class="rounded-lg border border-line bg-white p-5">
+                    <p class="text-xs font-semibold text-muted">Unit Booking (DP)</p>
+                    <p class="mt-2 text-3xl font-extrabold text-ink tabular-nums">${escapeHtml(unit.motor_booking)}</p>
+                    <p class="mt-1 text-xs text-amber-800">Menunggu pelunasan</p>
+                </div>
+                <div class="rounded-lg border border-line bg-white p-5">
+                    <p class="text-xs font-semibold text-muted">Unit Terjual</p>
+                    <p class="mt-2 text-3xl font-extrabold text-ink tabular-nums">${escapeHtml(unit.motor_terjual)}</p>
+                    <p class="mt-1 text-xs text-muted">Total tercatat terjual</p>
+                </div>
+                <div class="rounded-lg border border-line bg-white p-5">
+                    <p class="text-xs font-semibold text-muted">Total Aset Stok</p>
+                    <p class="mt-2 text-xl font-extrabold text-ink tabular-nums">${escapeHtml(keu.total_aset_tersedia_formatted)}</p>
+                    <p class="mt-1 text-xs text-emerald-700">Estimasi laba: ${escapeHtml(keu.estimasi_potensi_laba_tersedia_formatted)}</p>
+                </div>
+            </div>
+
+            <div class="mt-4 grid gap-4 sm:grid-cols-3">
+                <div class="rounded-lg border border-line bg-white p-5">
+                    <p class="text-xs font-semibold text-muted">Total Omset Penjualan</p>
+                    <p class="mt-1.5 text-xl font-extrabold text-ink tabular-nums">${escapeHtml(keu.total_omset_formatted)}</p>
+                </div>
+                <div class="rounded-lg border border-line bg-white p-5">
+                    <p class="text-xs font-semibold text-muted">Total Keuntungan Bersih</p>
+                    <p class="mt-1.5 text-xl font-extrabold text-emerald-700 tabular-nums">${escapeHtml(keu.total_keuntungan_formatted)}</p>
+                </div>
+                <div class="rounded-lg border border-line bg-white p-5">
+                    <p class="text-xs font-semibold text-muted">Performa ${escapeHtml(bulan.bulan)}</p>
+                    <p class="mt-1.5 text-xl font-extrabold text-ink tabular-nums">${escapeHtml(bulan.unit_terjual)} unit &middot; ${escapeHtml(bulan.keuntungan_formatted)}</p>
+                </div>
+            </div>
+        </section>
+
+        <section aria-labelledby="recent-motors-heading" class="mt-8 rounded-lg border border-line bg-white">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line px-5 py-4">
+                <div>
+                    <h2 id="recent-motors-heading" class="text-base font-bold text-ink">5 Motor Masuk Terbaru</h2>
+                    <p class="text-xs text-muted">Harga beli hanya ditampilkan di panel admin.</p>
+                </div>
+                <a href="/admin/motor" class="text-sm font-semibold text-brand hover:underline">Kelola semua unit</a>
+            </div>
+            <div tabindex="0" role="region" aria-labelledby="recent-motors-heading" class="table-wrapper">
+                <table class="data-table data-table--stack text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-line text-xs font-semibold text-muted">
+                            <th scope="col" class="px-5 py-3">Unit</th>
+                            <th scope="col" class="px-4 py-3">Tahun</th>
+                            <th scope="col" class="px-4 py-3">Harga Beli</th>
+                            <th scope="col" class="px-4 py-3">Harga Jual</th>
+                            <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-5 py-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line">
+                        ${motors.map((m) => `
+                            <tr class="hover:bg-surface/60">
+                                <th scope="row" data-label="Unit" class="px-5 py-3.5 font-bold text-ink">${escapeHtml(m.nama_motor)}</th>
+                                <td data-label="Tahun" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(m.tahun)}</td>
+                                <td data-label="Harga Beli" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(formatRupiah(m.harga_beli))}</td>
+                                <td data-label="Harga Jual" class="px-4 py-3.5 font-bold text-ink tabular-nums">${escapeHtml(formatRupiah(m.harga_jual))}</td>
+                                <td data-label="Status" class="px-4 py-3.5">${statusBadgeHtml(m.status)}</td>
+                                <td data-label="Aksi" class="px-5 py-3.5 text-right">
+                                    <a href="/admin/motor/${encodeURIComponent(m.id)}/edit" class="rounded border border-line bg-white px-2.5 py-1.5 text-xs font-semibold text-ink hover:bg-surface">Edit</a>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section aria-labelledby="recent-tx-heading" class="mt-8 rounded-lg border border-line bg-white">
+            <div class="border-b border-line px-5 py-4">
+                <h2 id="recent-tx-heading" class="text-base font-bold text-ink">Transaksi Penjualan Terbaru</h2>
+            </div>
+            ${tx.length === 0 ? `
+                <div class="px-6 py-10 text-center text-sm text-muted">Belum ada transaksi penjualan yang tercatat.</div>
+            ` : `
+                <div tabindex="0" role="region" aria-labelledby="recent-tx-heading" class="table-wrapper">
+                    <table class="data-table data-table--stack text-left text-sm">
+                        <thead>
+                            <tr class="border-b border-line text-xs font-semibold text-muted">
+                                <th scope="col" class="px-5 py-3">Kode</th>
+                                <th scope="col" class="px-4 py-3">Tanggal</th>
+                                <th scope="col" class="px-4 py-3">Motor</th>
+                                <th scope="col" class="px-4 py-3">Pembeli</th>
+                                <th scope="col" class="px-4 py-3">Harga Jual</th>
+                                <th scope="col" class="px-5 py-3 text-right">Keuntungan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-line">
+                            ${tx.map((t) => `
+                                <tr class="hover:bg-surface/60">
+                                    <th scope="row" data-label="Kode" class="px-5 py-3.5 font-semibold text-ink tabular-nums">${escapeHtml(t.kode_transaksi)}</th>
+                                    <td data-label="Tanggal" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(t.tanggal)}</td>
+                                    <td data-label="Motor" class="px-4 py-3.5 font-medium text-ink">${escapeHtml(t.motor)}</td>
+                                    <td data-label="Pembeli" class="px-4 py-3.5 text-muted">${escapeHtml(t.nama_pembeli)}</td>
+                                    <td data-label="Harga Jual" class="px-4 py-3.5 font-semibold text-ink tabular-nums">${escapeHtml(t.harga_jual_formatted)}</td>
+                                    <td data-label="Keuntungan" class="px-5 py-3.5 text-right font-bold text-emerald-700 tabular-nums">${escapeHtml(t.keuntungan_formatted)}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `}
+        </section>
+    `;
+}
+
+async function initAdminMotorsIndex() {
+    const user = await ensureAdminAuthenticated();
+    if (!user) {
+        return;
+    }
+
+    const filterForm = document.getElementById('admin-motor-filter');
+    const merkSelect = document.getElementById('admin-filter-merk');
+    const tableContainer = document.getElementById('admin-motors-table-container');
+    const countBadge = document.getElementById('admin-motors-count');
+    const feedback = document.getElementById('admin-feedback');
+
+    const metaRes = await apiFetch('/motor/meta/filters');
+    if (metaRes.ok && merkSelect && Array.isArray(metaRes.data?.merks)) {
+        merkSelect.innerHTML = '<option value="">Semua Merk</option>' +
+            metaRes.data.merks.map((m) => `<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
+    }
+
+    function showFeedback(type, message) {
+        if (!feedback) {
+            return;
+        }
+        feedback.hidden = false;
+        feedback.className = type === 'error'
+            ? 'mb-6 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-900'
+            : 'mb-6 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-900';
+        feedback.textContent = message;
+    }
+
+    async function loadMotors(page = 1) {
+        const query = new URLSearchParams({ per_page: '15', page: String(page) });
+        if (filterForm) {
+            const fd = new FormData(filterForm);
+            for (const [k, v] of fd.entries()) {
+                if (String(v).trim()) {
+                    query.set(k, String(v).trim());
+                }
+            }
+        }
+
+        if (tableContainer) {
+            tableContainer.innerHTML = '<div class="px-6 py-10 text-center text-sm text-muted" role="status">Memuat daftar unit motor...</div>';
+        }
+
+        const res = await apiFetch(`/admin/motor?${query.toString()}`);
+        if (!res.ok) {
+            if (tableContainer) {
+                tableContainer.innerHTML = `<div role="alert" class="px-6 py-10 text-center text-sm font-medium text-red-800">${escapeHtml(res.message)}</div>`;
+            }
+            return;
+        }
+
+        const items = Array.isArray(res.data) ? res.data : [];
+        if (countBadge) {
+            countBadge.textContent = `${res.meta?.total ?? items.length} unit`;
+        }
+
+        if (items.length === 0) {
+            tableContainer.innerHTML = `
+                <div class="px-6 py-12 text-center">
+                    <p class="text-base font-bold text-ink">Tidak ada unit motor ditemukan</p>
+                    <p class="mt-1 text-sm text-muted">Tambahkan unit baru atau reset filter pencarian Anda.</p>
+                    <div class="mt-5">
+                        <a href="/admin/motor/create" class="btn-primary">Tambah Unit Motor</a>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        tableContainer.innerHTML = `
+            <div tabindex="0" role="region" aria-labelledby="admin-motors-heading" class="table-wrapper">
+                <table class="data-table data-table--stack text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-line text-xs font-semibold text-muted">
+                            <th scope="col" class="px-5 py-3">Unit</th>
+                            <th scope="col" class="px-4 py-3">Tahun / KM</th>
+                            <th scope="col" class="px-4 py-3">Harga Beli</th>
+                            <th scope="col" class="px-4 py-3">Harga Jual</th>
+                            <th scope="col" class="px-4 py-3">Potensi Laba</th>
+                            <th scope="col" class="px-4 py-3">Status</th>
+                            <th scope="col" class="px-5 py-3 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-line">
+                        ${items.map((m) => {
+                            const photo = escapeHtml(getMotorPhotoUrl(m));
+                            const fallback = escapeHtml(getStandinPhoto(m.id));
+                            const nextStatus = m.status === 'tersedia' ? 'booking' : 'tersedia';
+                            const nextLabel = nextStatus === 'booking' ? 'Tandai Booking' : 'Tandai Tersedia';
+                            return `
+                                <tr class="hover:bg-surface/60">
+                                    <th scope="row" data-label="Unit" class="px-5 py-3.5">
+                                        <div class="flex items-center gap-3">
+                                            <img src="${photo}" data-fallback="${fallback}" alt="${escapeHtml(m.nama_motor)}" width="64" height="48" loading="lazy" class="h-12 w-16 shrink-0 rounded border border-line object-cover">
+                                            <div class="text-left">
+                                                <p class="font-bold text-ink">${escapeHtml(m.nama_motor)}</p>
+                                                <p class="text-xs text-muted">${escapeHtml(m.merk)} &middot; ${escapeHtml(m.tipe_motor)}</p>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <td data-label="Tahun / KM" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(m.tahun)} &middot; ${escapeHtml(formatKm(m.jarak_tempuh))}</td>
+                                    <td data-label="Harga Beli" class="px-4 py-3.5 text-muted tabular-nums">${escapeHtml(m.harga_beli_formatted)}</td>
+                                    <td data-label="Harga Jual" class="px-4 py-3.5 font-bold text-ink tabular-nums">${escapeHtml(m.harga_jual_formatted)}</td>
+                                    <td data-label="Potensi Laba" class="px-4 py-3.5 font-semibold text-emerald-700 tabular-nums">${escapeHtml(m.potensi_keuntungan_formatted)}</td>
+                                    <td data-label="Status" class="px-4 py-3.5">
+                                        <div class="flex flex-wrap items-center gap-2">
+                                            ${statusBadgeHtml(m.status)}
+                                            ${m.status !== 'terjual' ? `<button type="button" data-toggle-status="${m.id}" data-next-status="${nextStatus}" class="text-xs font-semibold text-muted underline hover:text-ink">${nextLabel}</button>` : ''}
+                                        </div>
+                                    </td>
+                                    <td data-label="Aksi" class="px-5 py-3.5 text-right">
+                                        <div class="inline-flex items-center gap-1.5">
+                                            <a href="/motor/${encodeURIComponent(m.id)}" target="_blank" rel="noopener noreferrer" class="rounded border border-line bg-white px-2.5 py-1.5 text-xs font-semibold text-ink hover:bg-surface">Publik</a>
+                                            <a href="/admin/motor/${encodeURIComponent(m.id)}/edit" class="rounded border border-line bg-white px-2.5 py-1.5 text-xs font-semibold text-ink hover:bg-surface">Edit</a>
+                                            <button type="button" data-delete-motor="${m.id}" data-motor-name="${escapeHtml(m.nama_motor)}" class="rounded border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-semibold text-red-800 hover:bg-red-100">Hapus</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        attachImageFallbacks(tableContainer);
+
+        tableContainer.querySelectorAll('[data-toggle-status]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-toggle-status');
+                const status = btn.getAttribute('data-next-status');
+                btn.disabled = true;
+                const updateRes = await apiFetch(`/admin/motor/${encodeURIComponent(id)}`, {
+                    method: 'POST',
+                    body: JSON.stringify({ status }),
+                });
+                if (updateRes.ok) {
+                    showFeedback('success', `Status unit berhasil diperbarui menjadi ${status}.`);
+                    await loadMotors(page);
+                } else {
+                    showFeedback('error', updateRes.message);
+                    btn.disabled = false;
+                }
+            });
+        });
+
+        tableContainer.querySelectorAll('[data-delete-motor]').forEach((btn) => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-delete-motor');
+                const name = btn.getAttribute('data-motor-name');
+                if (!window.confirm(`Hapus unit ${name}?`)) {
+                    return;
+                }
+                btn.disabled = true;
+                const delRes = await apiFetch(`/admin/motor/${encodeURIComponent(id)}`, { method: 'DELETE' });
+                if (delRes.ok) {
+                    showFeedback('success', delRes.message || 'Unit berhasil dihapus.');
+                    await loadMotors(page);
+                } else {
+                    showFeedback('error', delRes.message);
+                    btn.disabled = false;
+                }
+            });
+        });
+    }
+
+    filterForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        loadMotors(1);
+    });
+
+    document.getElementById('admin-filter-reset')?.addEventListener('click', () => {
+        filterForm?.reset();
+        loadMotors(1);
+    });
+
+    await loadMotors(1);
+}
+
+async function initAdminMotorForm() {
+    const user = await ensureAdminAuthenticated();
+    if (!user) {
+        return;
+    }
+
+    const form = document.getElementById('admin-motor-form');
+    const motorId = form?.getAttribute('data-motor-id') || '';
+    const isEdit = Boolean(motorId);
+    const errorBox = document.getElementById('form-error-summary');
+    const submitBtn = document.getElementById('form-submit-btn');
+
+    // Photo preview
+    const photoInput = document.getElementById('foto_utama');
+    const previewBox = document.getElementById('photo-preview-box');
+    const previewImg = document.getElementById('photo-preview-img');
+    photoInput?.addEventListener('change', () => {
+        const file = photoInput.files?.[0];
+        if (!file || !previewBox || !previewImg) {
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            if (typeof e.target?.result === 'string') {
+                previewImg.src = e.target.result;
+                previewBox.hidden = false;
+            }
+        };
+        reader.readAsDataURL(file);
+    });
+
+    if (isEdit && form) {
+        const res = await apiFetch(`/admin/motor/${encodeURIComponent(motorId)}`);
+        if (!res.ok || !res.data) {
+            if (errorBox) {
+                errorBox.hidden = false;
+                errorBox.textContent = `Gagal memuat data motor: ${res.message}`;
+            }
+            return;
+        }
+        const m = res.data;
+        const fields = ['nama_motor', 'merk', 'tipe_motor', 'tahun', 'harga_beli', 'harga_jual', 'jarak_tempuh', 'kondisi', 'surat_surat', 'pajak', 'garansi', 'status', 'deskripsi'];
+        fields.forEach((name) => {
+            const el = form.elements.namedItem(name);
+            if (el && m[name] !== null && m[name] !== undefined) {
+                el.value = String(m[name]);
+            }
+        });
+        if (m.foto_utama && previewBox && previewImg) {
+            previewImg.src = m.foto_utama;
+            previewBox.hidden = false;
+        }
+    }
+
+    form?.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (errorBox) {
+            errorBox.hidden = true;
+            errorBox.innerHTML = '';
+        }
+
+        const fd = new FormData(form);
+        // Remove empty file inputs so optional image rules pass cleanly
+        if (!photoInput?.files?.length) {
+            fd.delete('foto_utama');
+        }
+        const galleryInput = document.getElementById('photos');
+        if (!galleryInput?.files?.length) {
+            fd.delete('photos[]');
+        }
+
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Menyimpan...';
+        }
+
+        const endpoint = isEdit ? `/admin/motor/${encodeURIComponent(motorId)}` : '/admin/motor';
+        const res = await apiFetch(endpoint, {
+            method: 'POST',
+            body: fd,
+        });
+
+        if (!res.ok) {
+            if (errorBox) {
+                const lines = res.errors
+                    ? Object.values(res.errors).flat().map((msg) => `<li>${escapeHtml(msg)}</li>`).join('')
+                    : `<li>${escapeHtml(res.message)}</li>`;
+                errorBox.hidden = false;
+                errorBox.innerHTML = `<p class="font-bold">Periksa kembali data unit:</p><ul class="mt-1 list-disc pl-5">${lines}</ul>`;
+                errorBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = isEdit ? 'Simpan Perubahan' : 'Simpan Unit ke Katalog';
+            }
+            return;
+        }
+
+        window.location.href = '/admin/motor';
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     setupCommonControls();
@@ -1095,11 +1092,11 @@ document.addEventListener('DOMContentLoaded', () => {
         initAuthLogin();
     }
     // Bagian Panel Admin (di-comment dulu — diserahkan ke anggota tim berikutnya)
-    // else if (page === 'admin-dashboard') {
-    //     initAdminDashboard();
-    // } else if (page === 'admin-motors-index') {
-    //     initAdminMotorsIndex();
-    // } else if (page === 'admin-motors-form') {
-    //     initAdminMotorForm();
-    // }
+    else if (page === 'admin-dashboard') {
+        initAdminDashboard();
+    } else if (page === 'admin-motors-index') {
+        initAdminMotorsIndex();
+    } else if (page === 'admin-motors-form') {
+        initAdminMotorForm();
+    }
 });
