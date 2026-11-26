@@ -139,6 +139,30 @@ export function statusBadgeHtml(status) {
     </span>`;
 }
 
+export function statusTextHtml(status) {
+    const map = {
+        tersedia: {
+            label: 'Tersedia',
+            classes: 'text-emerald-700',
+        },
+        booking: {
+            label: 'Dipesan',
+            classes: 'text-amber-800',
+        },
+        terjual: {
+            label: 'Terjual',
+            classes: 'text-red-700',
+        },
+    };
+
+    const item = map[status] || {
+        label: escapeHtml(status || 'Tersedia'),
+        classes: 'text-slate-700',
+    };
+
+    return `<span class="text-xs font-semibold tracking-tight ${item.classes}">${item.label}</span>`;
+}
+
 export function getStandinPhoto(id = 0) {
     const index = Math.abs(Number(id) || 0) % STANDIN_PHOTOS.length;
     return STANDIN_PHOTOS[index];
@@ -175,7 +199,7 @@ export function renderMotorCard(motor, kontak) {
 
     return `
         <article class="unit-card flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white">
-            <a href="${detailUrl}" class="relative block aspect-[4/3] w-full overflow-hidden bg-surface">
+            <a href="${detailUrl}" class="block aspect-[4/3] w-full overflow-hidden bg-surface">
                 <img
                     src="${photoUrl}"
                     alt="${escapeHtml(motor.nama_motor)} tahun ${escapeHtml(motor.tahun)}"
@@ -186,9 +210,6 @@ export function renderMotorCard(motor, kontak) {
                     data-fallback="${fallbackUrl}"
                     class="unit-photo h-full w-full object-cover"
                 >
-                <div class="absolute left-3 top-3">
-                    ${statusBadgeHtml(motor.status)}
-                </div>
             </a>
 
             <div class="flex flex-1 flex-col p-4">
@@ -203,14 +224,15 @@ export function renderMotorCard(motor, kontak) {
                     </a>
                 </h3>
 
-                <p class="mt-1.5 text-sm text-muted tabular-nums">
+                <p class="mt-1.5 mb-3 text-sm text-muted tabular-nums">
                     ${escapeHtml(motor.tahun)} &middot; ${escapeHtml(formatKm(motor.jarak_tempuh))}
                 </p>
 
-                <div class="mt-3 flex flex-wrap items-baseline justify-between gap-2 border-t border-line pt-3">
+                <div class="mt-auto flex flex-wrap items-baseline justify-between gap-2 border-t border-line pt-3">
                     <p class="text-lg font-extrabold tracking-tight text-ink tabular-nums">
                         ${escapeHtml(formatRupiah(motor.harga_jual))}
                     </p>
+                    ${statusTextHtml(motor.status)}
                 </div>
 
                 <div class="mt-4 grid grid-cols-2 gap-2 pt-1">
