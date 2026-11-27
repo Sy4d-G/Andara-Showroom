@@ -34,7 +34,7 @@ class StoreSalesTransactionRequest extends FormRequest
             'nama_pembeli' => ['required', 'string', 'max:255'],
             'no_telepon_pembeli' => ['required', 'string', 'max:50'],
             'alamat_pembeli' => ['nullable', 'string'],
-            'tanggal_transaksi' => ['required', 'date'],
+            'tanggal_transaksi' => ['required', 'date', 'before_or_equal:today'],
             'harga_jual' => ['required', 'integer', 'min:0'],
             'harga_beli' => ['nullable', 'integer', 'min:0'],
             'metode_pembayaran' => ['nullable', 'string', 'max:50'],
@@ -51,6 +51,7 @@ class StoreSalesTransactionRequest extends FormRequest
     {
         return [
             'motor_id.exists' => 'Motor yang dipilih tidak ditemukan atau sudah berstatus terjual.',
+            'tanggal_transaksi.before_or_equal' => 'Tanggal transaksi tidak boleh di masa depan.',
         ];
     }
 }

@@ -369,3 +369,23 @@
         text-align: left;
     }
 }
+
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #111318 !important;
+    }
+
+    main {
+        padding: 0 !important;
+    }
+
+    .table-wrapper {
+        overflow: visible !important;
+        container-type: normal !important;
+    }
+
+    .data-table thead th {
+        position: static !important;
+    }
+}

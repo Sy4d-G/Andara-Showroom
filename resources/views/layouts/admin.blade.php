@@ -13,7 +13,7 @@
     <a href="#admin-main" class="skip-link">Lewati ke konten utama</a>
 
     <div class="flex min-h-screen flex-col lg:flex-row">
-        <aside class="hidden w-64 shrink-0 flex-col bg-ink text-white lg:flex">
+        <aside class="hidden w-64 shrink-0 flex-col bg-ink text-white lg:flex print:hidden">
             <div class="flex h-16 items-center border-b border-white/10 px-5">
                 <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center">
                     <x-brand-mark theme="dark" />
@@ -63,6 +63,39 @@
                 </div>
 
                 <div>
+                    <p class="px-3 text-xs font-semibold text-slate-400">Penjualan &amp; Keuangan</p>
+                    <ul class="mt-2 space-y-1">
+                        <li>
+                            <a
+                                href="{{ route('admin.transactions.index') }}"
+                                @if (request()->routeIs('admin.transactions.*')) aria-current="page" @endif
+                                class="owner-nav-link flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white"
+                            >
+                                <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+                                    <rect x="9" y="3" width="6" height="4" rx="1" />
+                                    <path d="M9 12h6M9 16h4" />
+                                </svg>
+                                <span>Transaksi Penjualan</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="{{ route('admin.reports.index') }}"
+                                @if (request()->routeIs('admin.reports.*')) aria-current="page" @endif
+                                class="owner-nav-link flex min-h-11 items-center gap-3 rounded-md px-3 text-sm font-medium text-slate-300 hover:bg-white/10 hover:text-white"
+                            >
+                                <svg class="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                    <path d="M3 3v18h18" />
+                                    <path d="M7 15l4-4 3 3 5-6" />
+                                </svg>
+                                <span>Laporan Keuangan</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div>
                     <p class="px-3 text-xs font-semibold text-slate-400">Situs Publik</p>
                     <ul class="mt-2 space-y-1">
                         <li>
@@ -103,7 +136,7 @@
         </aside>
 
         <div class="flex min-w-0 flex-1 flex-col">
-            <header class="sticky top-0 z-30 border-b border-line bg-white">
+            <header class="sticky top-0 z-30 border-b border-line bg-white print:hidden">
                 <div class="flex h-16 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                     <div class="flex items-center gap-3">
                         <button
@@ -136,6 +169,8 @@
                     <ul class="space-y-1">
                         <li><a href="{{ route('admin.dashboard') }}" @if (request()->routeIs('admin.dashboard')) aria-current="page" @endif class="owner-nav-link flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-slate-200 hover:bg-white/10">Dashboard</a></li>
                         <li><a href="{{ route('admin.motors.index') }}" @if (request()->routeIs('admin.motors.*')) aria-current="page" @endif class="owner-nav-link flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-slate-200 hover:bg-white/10">Unit Motor</a></li>
+                        <li><a href="{{ route('admin.transactions.index') }}" @if (request()->routeIs('admin.transactions.*')) aria-current="page" @endif class="owner-nav-link flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-slate-200 hover:bg-white/10">Transaksi Penjualan</a></li>
+                        <li><a href="{{ route('admin.reports.index') }}" @if (request()->routeIs('admin.reports.*')) aria-current="page" @endif class="owner-nav-link flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-slate-200 hover:bg-white/10">Laporan Keuangan</a></li>
                         <li><a href="{{ route('catalog.index') }}" class="flex min-h-11 items-center rounded-md px-3 text-sm font-medium text-slate-300 hover:bg-white/10">Katalog Publik</a></li>
                     </ul>
                     <div class="mt-4 border-t border-white/10 pt-3">

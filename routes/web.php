@@ -20,4 +20,12 @@ Route::prefix('admin')->name('admin.')->group(function (): void {
     Route::get('/motor/{id}/edit', fn (int $id) => view('admin.motors.form', ['motorId' => $id]))
         ->whereNumber('id')
         ->name('motors.edit');
+
+    // Transaksi Penjualan & Laporan Keuangan
+    Route::view('/transaksi', 'admin.transactions.index')->name('transactions.index');
+    Route::view('/transaksi/create', 'admin.transactions.create')->name('transactions.create');
+    Route::get('/transaksi/{id}', fn (int $id) => view('admin.transactions.show', ['transactionId' => $id]))
+        ->whereNumber('id')
+        ->name('transactions.show');
+    Route::view('/laporan', 'admin.reports.index')->name('reports.index');
 });

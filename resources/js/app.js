@@ -14,6 +14,12 @@ import {
     setAuth,
     statusBadgeHtml,
 } from './api.js';
+import {
+    initAdminReportsIndex,
+    initAdminTransactionCreate,
+    initAdminTransactionShow,
+    initAdminTransactionsIndex,
+} from './admin-sales.js';
 
 let cachedKontak = null;
 
@@ -1098,5 +1104,13 @@ document.addEventListener('DOMContentLoaded', () => {
         initAdminMotorsIndex();
     } else if (page === 'admin-motors-form') {
         initAdminMotorForm();
+    } else if (page === 'admin-transactions-index') {
+        initAdminTransactionsIndex(ensureAdminAuthenticated);
+    } else if (page === 'admin-transactions-create') {
+        initAdminTransactionCreate(ensureAdminAuthenticated);
+    } else if (page === 'admin-transactions-show') {
+        initAdminTransactionShow(ensureAdminAuthenticated, loadKontak);
+    } else if (page === 'admin-reports-index') {
+        initAdminReportsIndex(ensureAdminAuthenticated, loadKontak);
     }
 });

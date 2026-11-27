@@ -30,6 +30,14 @@ class SalesTransactionController extends Controller
         if ($request->filled('tanggal_selesai')) {
             $query->whereDate('tanggal_transaksi', '<=', $request->input('tanggal_selesai'));
         }
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal_transaksi', (int) $request->input('tahun'));
+        }
+
+        // Payment method filter
+        if ($request->filled('metode_pembayaran')) {
+            $query->where('metode_pembayaran', $request->input('metode_pembayaran'));
+        }
 
         // Search filter
         if ($request->filled('search')) {
@@ -139,22 +147,40 @@ class SalesTransactionController extends Controller
         if ($request->filled('tahun')) {
             $query->whereYear('tanggal_transaksi', (int) $request->input('tahun'));
         }
-
-        $totalUnit = (int) $query->count();
-        $totalOmset = (int) $query->sum('harga_jual');
-        $totalModal = (int) $query->sum('harga_beli');
-        $totalKeuntungan = (int) $query->sum('keuntungan');
-
-        // Monthly breakdown
-        $monthlyQuery = SalesTransaction::query();
-        if ($request->filled('tahun')) {
-            $monthlyQuery->whereYear('tanggal_transaksi', (int) $request->input('tahun'));
-        } else {
-            $monthlyQuery->whereYear('tanggal_transaksi', date('Y'));
+        if ($request->filled('metode_pembayaran')) {
+            $query->where('metode_pembayaran', $request->input('metode_pembayaran'));
         }
 
+        $totalUnit = (int) (clone $query)->count();
+        $totalOmset = (int) (clone $query)->sum('harga_jual');
+        $totalModal = (int) (clone $query)->sum('harga_beli');
+        $totalKeuntungan = (int) (clone $query)->sum('keuntungan');
+        $rataRataKeuntungan = $totalUnit > 0 ? (int) round($totalKeuntungan / $totalUnit) : 0;
+
+        // Monthly breakdown (compatible with both MySQL and SQLite)
+        $monthlyQuery = SalesTransaction::query();
+        if ($request->filled('tanggal_mulai')) {
+            $monthlyQuery->whereDate('tanggal_transaksi', '>=', $request->input('tanggal_mulai'));
+        }
+        if ($request->filled('tanggal_selesai')) {
+            $monthlyQuery->whereDate('tanggal_transaksi', '<=', $request->input('tanggal_selesai'));
+        }
+        if ($request->filled('metode_pembayaran')) {
+            $monthlyQuery->where('metode_pembayaran', $request->input('metode_pembayaran'));
+        }
+        if ($request->filled('tahun')) {
+            $monthlyQuery->whereYear('tanggal_transaksi', (int) $request->input('tahun'));
+        } elseif (! $request->filled('tanggal_mulai') && ! $request->filled('tanggal_selesai')) {
+            $monthlyQuery->whereYear('tanggal_transaksi', (int) date('Y'));
+        }
+
+        $driver = DB::connection()->getDriverName();
+        $monthExpression = $driver === 'sqlite'
+            ? "CAST(strftime('%m', tanggal_transaksi) AS INTEGER)"
+            : 'MONTH(tanggal_transaksi)';
+
         $monthlyStats = $monthlyQuery->select([
-            DB::raw("strftime('%m', tanggal_transaksi) as bulan"),
+            DB::raw("{$monthExpression} as bulan"),
             DB::raw('COUNT(*) as total_unit'),
             DB::raw('SUM(harga_jual) as total_omset'),
             DB::raw('SUM(harga_beli) as total_modal'),
@@ -184,6 +210,8 @@ class SalesTransactionController extends Controller
                 'total_modal_formatted' => 'Rp '.number_format($totalModal, 0, ',', '.'),
                 'total_keuntungan' => $totalKeuntungan,
                 'total_keuntungan_formatted' => 'Rp '.number_format($totalKeuntungan, 0, ',', '.'),
+                'rata_rata_keuntungan' => $rataRataKeuntungan,
+                'rata_rata_keuntungan_formatted' => 'Rp '.number_format($rataRataKeuntungan, 0, ',', '.'),
                 'breakdown_bulanan' => $monthlyStats,
             ],
         ]);
@@ -202,6 +230,12 @@ class SalesTransactionController extends Controller
         if ($request->filled('tanggal_selesai')) {
             $query->whereDate('tanggal_transaksi', '<=', $request->input('tanggal_selesai'));
         }
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal_transaksi', (int) $request->input('tahun'));
+        }
+        if ($request->filled('metode_pembayaran')) {
+            $query->where('metode_pembayaran', $request->input('metode_pembayaran'));
+        }
 
         return $exportService->exportExcel($query);
     }
@@ -218,6 +252,12 @@ class SalesTransactionController extends Controller
         }
         if ($request->filled('tanggal_selesai')) {
             $query->whereDate('tanggal_transaksi', '<=', $request->input('tanggal_selesai'));
+        }
+        if ($request->filled('tahun')) {
+            $query->whereYear('tanggal_transaksi', (int) $request->input('tahun'));
+        }
+        if ($request->filled('metode_pembayaran')) {
+            $query->where('metode_pembayaran', $request->input('metode_pembayaran'));
         }
 
         return $exportService->exportCsv($query);
